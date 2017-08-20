@@ -30,11 +30,9 @@ void setup() {
 }
 
 void loop() {
-	/*printBME280Data(&Serial);
-	printBME280CalculatedData(&Serial);*/
-	/*bmeSenSor.printBME280Data(&Serial);
-	bmeSenSor.printBME280Data(&Serial);*/
+	
 	pox.update();
+	bmeSenSor.update();
 	if (millis() - tsLastReport > REPORTING_PERIOD_MS) {
 		
 		auto jsonData = GetJsonData();
@@ -51,6 +49,9 @@ String& GetJsonData()
 	root["tmp"] = pox.getTemperature();
 	root["spo2"] = pox.getSpO2();
 	root["bpm"] = pox.getHeartRate();
+	root["pres"] = bmeSenSor.pres;
+	root["hum"] = bmeSenSor.hum;
+	root["alt"] = bmeSenSor.altitude;
 	root.printTo(result);
 	return result;
 }

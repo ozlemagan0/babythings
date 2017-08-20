@@ -20,6 +20,8 @@ public:
 	void printBME280Data(Stream * client);
 	/* === Print a message to stream with the altitude, and dew point. === */
 	void printBME280CalculatedData(Stream* client);
+	float temp, hum, pres, altitude;
+	void update();
 private:
 	BME280I2C bme;
 };
