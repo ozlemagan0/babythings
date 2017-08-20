@@ -1,12 +1,17 @@
 
 #include "MBme280.h"
 #include "MAX30100_PulseOximeter.h"
-
+#include <ArduinoJson.h>
 #define REPORTING_PERIOD_MS     1000
 #define SERIAL_BAUD 115200
 MBme280 bmeSenSor;
 uint32_t tsLastReport = 0;
 PulseOximeter pox;
+StaticJsonBuffer<1024> jsonBuffer;
+
+String& GetJsonData();
+String result;
+
 void setup() {
 	Serial.begin(SERIAL_BAUD);
 	while (!Serial) {} // Wait
@@ -27,19 +32,25 @@ void setup() {
 void loop() {
 	/*printBME280Data(&Serial);
 	printBME280CalculatedData(&Serial);*/
-	bmeSenSor.printBME280Data(&Serial);
-	bmeSenSor.printBME280Data(&Serial);
+	/*bmeSenSor.printBME280Data(&Serial);
+	bmeSenSor.printBME280Data(&Serial);*/
 	pox.update();
 	if (millis() - tsLastReport > REPORTING_PERIOD_MS) {
-		Serial.print("Heart rate:");
-		Serial.print(pox.getHeartRate());
-		Serial.print("bpm / SpO2:");
-		Serial.print(pox.getSpO2());
-		Serial.print("% / temp:");
-		Serial.print(pox.getTemperature());
-		Serial.println("C");
-
+		
+		auto jsonData = GetJsonData();
+		Serial.println(jsonData);
 		tsLastReport = millis();
 	}
-	delay(500);
+
+}
+
+String& GetJsonData()
+{	
+	DynamicJsonBuffer jsonBuffer(256);
+	JsonObject& root = jsonBuffer.createObject();
+	root["tmp"] = pox.getTemperature();
+	root["spo2"] = pox.getSpO2();
+	root["bpm"] = pox.getHeartRate();
+	root.printTo(result);
+	return result;
 }
