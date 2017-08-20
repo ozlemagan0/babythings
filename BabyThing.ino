@@ -14,7 +14,7 @@ const char* password = "34an8124ALB9949";
 
 
 #define REPORTING_PERIOD_MS     1000
-#define REPORTING_PERIOD_MS2     50
+#define REPORTING_PERIOD_MS2     1
 #define SERIAL_BAUD 115200
 MBme280 bmeSenSor;
 uint32_t tsLastReport = 0,tsLastReport2=0;
