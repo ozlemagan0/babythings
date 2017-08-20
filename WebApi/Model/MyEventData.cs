@@ -8,6 +8,7 @@ namespace Babything.WebApi.Model
 {
     public class MyEventData
     {
+        public DateTime Time { get; set; } = DateTime.UtcNow;
         public double tmp { get; set; }
         public double spo2 { get; set; }
         public double bpm { get; set; }

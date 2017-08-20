@@ -14,16 +14,17 @@ const char* password = "34an8124ALB9949";
 
 
 #define REPORTING_PERIOD_MS     1000
+#define REPORTING_PERIOD_MS2     50
 #define SERIAL_BAUD 115200
 MBme280 bmeSenSor;
-uint32_t tsLastReport = 0;
+uint32_t tsLastReport = 0,tsLastReport2=0;
 PulseOximeter pox;
 StaticJsonBuffer<1024> jsonBuffer;
 ESP8266WiFiMulti WiFiMulti;
-String& GetJsonData();
+void GetJsonData();
 String result;
-
-void SendToCloud(String& data);
+HTTPClient http;
+void SendToCloud(String data);
 void setup() {
 	Serial.begin(SERIAL_BAUD);
 
@@ -63,19 +64,25 @@ void setup() {
 
 void loop() {
 
-	pox.update();
-	bmeSenSor.update();
+	if (millis()- tsLastReport2 > REPORTING_PERIOD_MS2)
+	{
+		pox.update();
+		bmeSenSor.update();
+		tsLastReport2 = millis();
+	}
+	
 	if (millis() - tsLastReport > REPORTING_PERIOD_MS) {
 
-		auto jsonData = GetJsonData();
-		Serial.println(jsonData);
-		SendToCloud(jsonData);
+		GetJsonData();
+		Serial.println(result);
+		SendToCloud(result);
+		result = "";
 		tsLastReport = millis();
 	}
 	delay(100);
 }
 
-String& GetJsonData()
+void GetJsonData()
 {
 	DynamicJsonBuffer jsonBuffer(128);
 	JsonObject& root = jsonBuffer.createObject();
@@ -86,12 +93,11 @@ String& GetJsonData()
 	root["hum"] = bmeSenSor.hum;
 	root["alt"] = bmeSenSor.altitude;
 	root.printTo(result);
-	return result;
 }
 
-void SendToCloud(String & data)
+void SendToCloud(String data)
 {
-	HTTPClient http;
+
 
 
 	http.begin("http://babythings.azurewebsites.net/api/data"); //HTTP
