@@ -8,9 +8,12 @@ namespace Babything.WebApi.Model
 {
     public class MyEventData
     {
-        public double Pulse { get; set; }
-        public double Acc { get; set; }
-        public Gps Gps { get; set; }
+        public double tmp { get; set; }
+        public double spo2 { get; set; }
+        public double bpm { get; set; }
+        public double pres { get; set; }
+        public double hum { get; set; }
+        public double alt { get; set; }
 
     }
 }
