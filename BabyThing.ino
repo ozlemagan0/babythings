@@ -26,16 +26,16 @@ String result;
 HTTPClient http;
 void SendToCloud(String data);
 void setup() {
-	Serial.begin(SERIAL_BAUD);
 
-	while (!Serial) {} // Wait
+
+	//Serial.begin(SERIAL_BAUD);
 
 
 	WiFi.mode(WIFI_STA);
-	WiFi.begin(ssid, password);
+	WiFi.begin(ssid, password,6);
 
 	while (WiFi.status() != WL_CONNECTED) {
-		delay(500);
+		delay(50);
 		Serial.print(".");
 	}
 
